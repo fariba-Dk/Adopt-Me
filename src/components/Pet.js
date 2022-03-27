@@ -1,5 +1,3 @@
-import React from 'react';
-
 //child takes props from parent element App
 const Pet = (props) => {
   return (
