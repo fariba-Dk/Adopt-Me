@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
-import Pet from './Pet'
+import Pet from './Pet';
+import useBreedList from '../hooks/useBreedList'
 
 
 //upper case because it never changes
@@ -12,10 +13,13 @@ const SearchParams = () =>{
   const [animal, updateAnimal] = useState("")//leave blank we have not selected
   const [breed, updateBreed]= useState("")
 
-  const breeds =[] //we make an api call to get it
   const [pets, updatePets]= useState([])
 
-//useEffect hook
+  const [breeds] = useBreedList(animal)//we make an api call to get it
+
+
+
+  //useEffect hook
   useEffect(()=>{
     requestPets()
   },[]);//hey when should you rerun? if we dont give it [], it would rerun => infinite loops to avoid add []
@@ -37,16 +41,21 @@ const SearchParams = () =>{
   return(
     <div className="search-params">
     {/* location */}
-      <form>
+      <form
+      onSubmit={(e)=>{
+        e.preventDefault() //have to prevent it from submitting or its going to refresh the page
+        requestPets()
+      }}>
         <label htmlFor="location">Location
           <select
-            id="animal"
-            value={location}
-            onSelect={(e)=>updateLocation(e.target.value)}
-            onBlur={(e)=>updateLocation(e.target.value)}
-          >
-           <option/>
 
+            id="animal"
+
+            onSelect={(e)=>updateLocation(e.target.value)}
+            value={location}
+            // onBlur={(e)=>updateLocation(e.target.value)}
+          >
+           <option value=""></option>
 
             {/* j a v a s c r i p t */}
             {LOCATIONS.map((location) =>(
@@ -68,7 +77,7 @@ const SearchParams = () =>{
             onSelect={(e)=>updateAnimal(e.target.value)}
             onBlur={(e)=>updateAnimal(e.target.value)}
             >
-            <option/>
+              <option value=""></option>
             {/* j a v a s c r i p t */}
             {ANIMALS.map((animal) =>(
               <option
@@ -90,8 +99,7 @@ const SearchParams = () =>{
             value={breed}
             onChange={(e)=>updateBreed(e.target.value)}
             onBlur={(e)=>updateBreed(e.target.value)}>
-
-            <option/>
+            <option value=""></option>
               {breeds.map((breed)=>(
                 <option
                 key={breed} value={breed}>
@@ -103,18 +111,18 @@ const SearchParams = () =>{
         <button>Submit</button>
       </form>
 
+
       {/* now once the submit is clicked we need to get pet */}
       {pets.map((pet)=>(
         <Pet
-        name={pet.name}
-        animal={pet.animal}
-        breed={pet.breed}
-          key={pet.id}
-        />
+          key={pet.id}/>
 
       ))}
+
+
+
     </div>
 
   )
 }
-export default SearchParams
+export default SearchParams;
